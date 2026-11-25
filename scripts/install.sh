@@ -35,6 +35,9 @@ On macOS, `/usr/bin/git` is an `xcrun` shim that reads `/var/db/xcode_select_lin
 - Reserve `BypassSandbox: true` for network `git` operations (`push`, `fetch`, `pull`, `clone`, `ls-remote`) or when `/Library/Developer/CommandLineTools/usr/bin/git` is unavailable.
 EOF
   echo "Installed global rule: ${rules_dir}/antigravity-sandbox-git-rules.md"
+  echo "  - Scope: Global (all projects in Antigravity App, IDE, and agy CLI)"
+  echo "  - Trigger: always_on (YAML frontmatter included)"
+  echo "  - Configured: Use /Library/Developer/CommandLineTools/usr/bin/git inside sandbox for local git commands; reserve BypassSandbox for network git operations"
 }
 
 resolve_python() {
@@ -89,12 +92,17 @@ PY
 
 install_hook_into() {
   local root_dir="$1"
+  local scope_label="$2"
   mkdir -p "${root_dir}/hooks"
   cp "${SKILL_DIR}/scripts/compact-reminder.sh" "${root_dir}/hooks/compact-reminder.sh"
   cp "${SKILL_DIR}/scripts/compact-reminder.py" "${root_dir}/hooks/compact-reminder.py"
   chmod +x "${root_dir}/hooks/compact-reminder.sh" "${root_dir}/hooks/compact-reminder.py"
   merge_hooks_json "${root_dir}/hooks.json"
   echo "Installed compact-threshold-reminder hook into: ${root_dir}"
+  echo "  - Scope: ${scope_label}"
+  echo "  - Hook config: ${root_dir}/hooks.json (key: compact-threshold-reminder, event: PreInvocation)"
+  echo "  - Scripts: ${root_dir}/hooks/compact-reminder.sh, ${root_dir}/hooks/compact-reminder.py"
+  echo "  - Defaults: warn at 250k tokens (AGY_COMPACT_WARN_TOKENS), repeat every +100k (AGY_COMPACT_REPEAT_STEP_TOKENS)"
 }
 
 link_skill() {
@@ -102,6 +110,8 @@ link_skill() {
   mkdir -p "${target_dir}"
   ln -sfn "${SKILL_DIR}" "${target_dir}/agy_speed_up"
   echo "Linked skill: ${target_dir}/agy_speed_up -> ${SKILL_DIR}"
+  echo "  - Scope: Skill directory (${target_dir}; ~/.gemini/config/skills applies to App, IDE, and agy CLI)"
+  echo "  - Skill: agy-speed-up (SKILL.md, references/, scripts/)"
 }
 
 if [ $# -eq 0 ]; then
@@ -117,11 +127,11 @@ while [ $# -gt 0 ]; do
       ;;
     --project-hook)
       [ $# -ge 2 ] || { echo "Missing <repo_dir> for --project-hook" >&2; exit 1; }
-      install_hook_into "$2/.agents"
+      install_hook_into "$2/.agents" "Project ($2)"
       shift 2
       ;;
     --global-hook)
-      install_hook_into "${GLOBAL_CONFIG_DIR}"
+      install_hook_into "${GLOBAL_CONFIG_DIR}" "Global (all projects)"
       shift
       ;;
     --link-skill)
@@ -136,7 +146,7 @@ while [ $# -gt 0 ]; do
     --all)
       install_global_rule
       link_skill "${GLOBAL_CONFIG_DIR}/skills"
-      install_hook_into "${GLOBAL_CONFIG_DIR}"
+      install_hook_into "${GLOBAL_CONFIG_DIR}" "Global (all projects)"
       shift
       ;;
     -h|--help)

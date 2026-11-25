@@ -2,6 +2,11 @@
 
 本项目遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 风格记录变更。
 
+## [0.1.2] - 2026-11-25
+
+### Improved
+- 优化 [scripts/install.sh](./scripts/install.sh) 的安装输出：为 `--global-rule`、`--project-hook`、`--global-hook`、`--link-skill` 与 `--all` 增加作用域、写入路径、触发方式及配置内容明细。
+
 ## [0.1.1] - 2026-11-25
 
 ### Added
