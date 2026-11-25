@@ -2,12 +2,12 @@
 
 本项目遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 风格记录变更。
 
-## [Unreleased]
+## [0.1.1] - 2026-11-25
 
 ### Added
 - 新增 [README.md](./README.md)，补充项目介绍、目录结构、安装与权限脚本用法以及新版 Antigravity 兼容性说明。
 - 新增 [CHANGELOG.md](./CHANGELOG.md)，记录基线功能与 Antigravity 版本兼容性审计结论。
-- 新增 [AGENTS.md](./AGENTS.md)，定义在本仓库中开发、修改与验证的 Agent 约定。
+- 新增 [AGENTS.md](./AGENTS.md)，定义在本仓库中开发、版本发布（commit 前更新版本号与 `CHANGELOG.md`）及验证的 Agent 约定。
 - 新增 [.gitignore](./.gitignore)，忽略 Python 缓存、`.DS_Store` 与 `.bak` 备份文件。
 
 ### Fixed

@@ -17,7 +17,16 @@ Instructions for AI coding agents working in the `agy_speed_up` repository.
 - **Rules frontmatter**: Any rule file written into `~/.gemini/config/rules/*.md` or `.agents/rules/*.md` **must** start with YAML frontmatter containing a valid `trigger` (`always_on`, `model_decision`, `glob`, or `manual`); files in `rules/` without frontmatter are silently discarded by Antigravity. Standalone `AGENTS.md` / `GEMINI.md` files must **not** use frontmatter.
 - **System-protected config files**: Do not attempt to edit `~/.gemini/config/config.json` or `~/.gemini/config/projects/*.json` from inside a sandboxed agent session (`Operation not permitted` / system protection boundary). Changes to those files via `configure-project-permissions.py` are intended to be run by the user in an external shell.
 - **Hook context hygiene**: Keep `compact-reminder.py` zero-model-overhead (`systemMessage: ""` with `metadata.user_markdown`) and deduplicated; injected `systemMessage` steps persist in conversation history.
-- **macOS sandbox `git` fast-path**: `/usr/bin/git` is an `xcrun` shim that reads `/var/db/xcode_select_link` and fails inside the macOS sandbox. If running local `git` commands inside the sandbox, invoke `/Library/Developer/CommandLineTools/usr/bin/git` directly (note: this directory may not yet be initialized as a git repository).
+- **macOS sandbox `git` fast-path**: `/usr/bin/git` is an `xcrun` shim that reads `/var/db/xcode_select_link` and fails inside the macOS sandbox. If running local `git` commands inside the sandbox, invoke `/Library/Developer/CommandLineTools/usr/bin/git` directly.
+
+## Versioning & Release Rules
+
+- **Update version before `git commit` (not at `git push`)**: Whenever committing user-facing features, fixes, or doc releases, bump the SemVer version in `CHANGELOG.md` **prior to running `git commit`** so the versioned entry is included in the commit itself (avoiding stale `[Unreleased]` sections or follow-up fixup commits at push time).
+- **SemVer guidelines**:
+  - `PATCH` (`0.1.x`): Bug fixes, Antigravity compatibility fixes, and documentation updates.
+  - `MINOR` (`0.x.0`): New scripts, new CLI flags/env vars, new hooks, or new skill capabilities.
+  - `MAJOR` (`x.0.0`): Breaking changes to CLI flags, hook install paths, or config schemas.
+- **No committed `[Unreleased]`**: Do not leave released/committed changes under `[Unreleased]` in `CHANGELOG.md`; move them under `## [X.Y.Z] - YYYY-MM-DD` before committing, and push annotated/lightweight tags (`git tag vX.Y.Z && git push origin main --tags`) when publishing a release.
 
 ## Coding Conventions
 
